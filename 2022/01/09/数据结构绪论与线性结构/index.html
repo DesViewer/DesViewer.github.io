@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="John Doe"><meta name="renderer" content="webkit"><meta name="copyright" content="John Doe"><meta name="keywords" content="Hexo"><meta name="description" content=""><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>数据结构1 · DesViewer's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/touxiang.jpg"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/touxiang.jpg"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">DesViewer</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">WZY没得脑壳</a></span><span><a href="//github.com/DesViewer" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">DesViewer's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">数据结构1</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2022-01-09</span></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p><strong>绪论</strong><br>1.复杂度的渐进表示法<br><img src="https://img-blog.csdnimg.cn/e7204ee3215044619733b32c42bc45e2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="复杂度的渐进表示法"><br>一个函数的上界和下界不是唯一的，o通常要找最小上界，Ω通常要取最大下界，不然是没有意义的 。</p>
+<p>2.如图，不要设计复杂度是n阶乘的算法<br><img src="https://img-blog.csdnimg.cn/6f842ddbe9f746a3acfcd51b21a93a9a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="输入规模"><br>3.复杂度分析<br><img src="https://img-blog.csdnimg.cn/63bb59e0954d4bdcb1b0ba534c07f8eb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="复杂度分析"><br>如果把两段算法拼到一起，那么总时间就是两段的和，他们的上界就是两个上界中较大的那个，当把两段算法嵌套时，两个复杂度要相乘，他们的上界就是上界的乘积。</p>
+<p><strong>线性结构</strong><br><img src="https://img-blog.csdnimg.cn/d4ba5e79c06341e291095b6da9f29503.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="一维数组表示一元多项式">这样的方法虽然方便，但很浪费空间，很多运算是在加无效的零。</p>
+<p><img src="https://img-blog.csdnimg.cn/557d8835adea479e8ed00adb59135cdf.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="使用结构数组表示"><br>利用结构数组，这个方法只需要表示非零项，运算也较为方便。<br><img src="https://img-blog.csdnimg.cn/4cf84bd9eb07475e8f27b11d820fa8fb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="链表结构表示"><br>这个方法定义了一个结构，包含多项式的系数，指数和指针域。<br>这说明了同一问题有不同的表示方法。有一类共性问题是有序线性序列的组织和管理，我们要用到线性表。<br><img src="https://img-blog.csdnimg.cn/9a686c3c07634cd1a777abc0e1c00b38.png" alt="线性表的定义"><br><img src="https://img-blog.csdnimg.cn/41283055db754372b718005c37ff32b9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="线性表的描述"><br><img src="https://img-blog.csdnimg.cn/9365c139367449d7aaf44dc1dbe0c7ef.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="线性表"><br>指针last指向数组里存放的线性表的最后一个元素存放的位置。<br><img src="https://img-blog.csdnimg.cn/e6d5e7b3ad8d4a71beb1431c95c29f85.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="初始化与查找"><br><img src="https://img-blog.csdnimg.cn/f881bbd663054825904e908bec54549c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="插入"><br>先把最后一个元素往后挪，再把前面的元素依次往后挪，最后插入元素。<br><img src="https://img-blog.csdnimg.cn/f50574d0ac764050820f077999c7b7f7.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="算法实现"><br><img src="https://img-blog.csdnimg.cn/f4264a0a51f54c3898307db98610df2b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="删除"><br>删除第i个元素也就是下标为i-1的元素，后面的元素依次往前移动。<br><img src="https://img-blog.csdnimg.cn/03c03836affc469c8973e802e342c027.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="算法实现"><br><img src="https://img-blog.csdnimg.cn/c32ae1cac0ee413fa520dd303fe4905d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="链式存储"><br><img src="https://img-blog.csdnimg.cn/49948f32d4674513ac0d1b40f32686a2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="求表长"><br>与数组不同，链表求表长必须遍历每一个节点。时间复杂度就是O(n)。从头指针依次往后，直到空指针。<br><img src="https://img-blog.csdnimg.cn/ca7219d9da544812a73fd4766804007c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="查找"><br><img src="https://img-blog.csdnimg.cn/187dab93d6274463a4b926aae88f0f9b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="插入"><br><img src="https://img-blog.csdnimg.cn/c5d9168a924841feb14199fe6cba6962.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="算法实现"><br><img src="https://img-blog.csdnimg.cn/383d16e7338c4774bfd5346d3cac6017.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="删除"><img src="https://img-blog.csdnimg.cn/f7cf45d7bfa04524831e037ec00b3f08.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="算法实现"><br><strong>堆栈</strong><br><img src="https://img-blog.csdnimg.cn/4c72c3bf82b74a83a4776ab4255c5b32.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="堆栈操作"><br><img src="https://img-blog.csdnimg.cn/28b1deaa17fd40219a5685f9844520b2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="栈的顺序存储结构"><br>入栈操作先要判断栈是否满。<br><img src="https://img-blog.csdnimg.cn/8ebc37e44b02458da8476de62763eca3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="出栈"><br>出栈操作要判断栈是否空。<br><img src="https://img-blog.csdnimg.cn/834dda2dbaf846e68d53bd35e23e8cc2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="压栈出栈操作"><br>使用链表结构表示堆栈事，不断申请节点空间插入头节点的后面。<br><img src="https://img-blog.csdnimg.cn/a9aec9d44f734b72bd2b0328d7a51cc6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="中缀表达式转化为后缀表达式"><br><strong>队列</strong><br><img src="https://img-blog.csdnimg.cn/fe6bfa40d2044378982a4bf625592406.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="队列操作"></p>
+<p><img src="https://img-blog.csdnimg.cn/f3ab601ae6244b8a875b8e2eba4555f2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="入队出队操作"><br><img src="https://img-blog.csdnimg.cn/d7a9168634094a7897517ede996b0456.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARGVzVmlld2Vy,size_20,color_FFFFFF,t_70,g_se,x_16" alt="队列应用，多项式加法运算"></p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://example.com">John Doe</a></p><p> <span>Link:  </span><a href="http://example.com/2022/01/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%AA%E8%AE%BA%E4%B8%8E%E7%BA%BF%E6%80%A7%E7%BB%93%E6%9E%84/">http://example.com/2022/01/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%AA%E8%AE%BA%E4%B8%8E%E7%BA%BF%E6%80%A7%E7%BB%93%E6%9E%84/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="nextSlogan" href="/2021/12/29/Java%E8%87%AA%E6%95%912/" title="Java自救2"><span>NextPost ></span><br><span class="nextTitle">Java自救2</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
